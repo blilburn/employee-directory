@@ -11,7 +11,8 @@ function App() {
   const [results, setResults] = useState([])
   //Setting Search
   const [search, setSearch] = useState("")
-
+  //sorting table results
+  const [sorts, setCitySort] = useState(true)
 
   //Made use of React useEffect hook for API call
   useEffect(() => {
@@ -19,7 +20,44 @@ function App() {
     setResults(res.data.results))
   }, [])
 
-//Displays application content and filters 
+  // Function to sort by ascending order
+  //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+  let ascendCitySort = function (prop, arr) {
+    arr.sort(function (a, b) {
+      if (a.location[prop] < b.location[prop]) {
+        return -1;
+      } else if (a.location[prop] > b.location[prop]) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  };
+
+    // Function to sort by descending order
+  //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+  let descendCitySort = function (prop, arr) {
+    arr.sort(function (a, b) {
+      if (a.location[prop] < b.location[prop]) {
+        return 1;
+      } else if (a.location[prop] > b.location[prop]) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (sorts) {
+      ascendCitySort("city", results)
+    }
+    else {
+      descendCitySort('city', results)
+    }
+  }, [sorts])
+
+
   return (
     <div className="App" >
       <Navbar></Navbar>
@@ -27,14 +65,15 @@ function App() {
         <input placeholder="Search by first name" className="searchBar" type="text" value={search} onChange={(event) => { setSearch(event.target.value) }}>
         </input>
         <div style={{alignContent: 'center', textAlign: 'center'}}>
-        <EmployeeTable >
+        <EmployeeTable   sorts={sorts} setCitySort={setCitySort}>
           {search.length < 1 ? results.map((result, i) => (
             <TableContent
               picture={result.picture.large} 
               name={result.name.first + " " + result.name.last}
               number={i}
               phone={result.phone}
-              email={result.email} >
+              email={result.email} 
+              city={result.location.city}>
             </TableContent>
           )) :
             results.map((result, i) => {
@@ -45,7 +84,8 @@ function App() {
                     name={result.name.first + " " + result.name.last}
                     number={i}
                     phone={result.phone}
-                    email={result.email}>
+                    email={result.email}
+                    city={result.location.city}>
                   </TableContent>)
               } else {return (false)}
             }) 

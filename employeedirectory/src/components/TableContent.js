@@ -8,6 +8,7 @@ function TableContent(props) {
             <th>{props.name}</th>
             <td >{props.phone}</td>
             <td>{props.email}</td>
+            <td>{props.city}</td>
         </tr>
     )
 
